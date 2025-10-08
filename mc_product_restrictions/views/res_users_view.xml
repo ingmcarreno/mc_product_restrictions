@@ -6,12 +6,12 @@
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet/notebook" position="inside">
-                <page string="Allowed products" groups="mc_product_restrictions.group_product_restriction">
+                <page string="Allowed products" groups="base.group_system,mc_product_restrictions.group_product_restriction">
                     <group>
                         <field name="restricted_product_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
                     </group>
                 </page>
-                <page string="Allowed accounts" groups="mc_product_restrictions.group_product_restriction">
+                <page string="Allowed accounts" groups="base.group_system,mc_product_restrictions.group_product_restriction">
                     <group>
                         <field name="restricted_account_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
                     </group>
