@@ -21,13 +21,14 @@ class AccountMoveLine(models.Model):
         return super(AccountMoveLine, self).write(vals)
 
     def _check_account(self, vals):
-        if self.env.su or not isinstance(vals, dict):
+        user = self.env.user
+        if user._has_restriction_bypass() or not isinstance(vals, dict):
             return
         account_id = vals.get('account_id')
         if not account_id:
             return
         account = self.env['account.account'].browse(account_id)
-        if account and not self.env.user._is_account_allowed(account):
+        if account and not user._is_account_allowed(account):
             raise ValidationError(
                 "You are not allowed to use the account '%s' in journal entries." % account.display_name
             )
