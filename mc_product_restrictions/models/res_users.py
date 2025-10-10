@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import SUPERUSER_ID, api, fields, models
+from odoo import api, fields, models
 
 
 def _to_product_template(product):
@@ -76,6 +76,7 @@ class ResUsers(models.Model):
     def _is_product_allowed(self, product):
         self.ensure_one()
         if self._has_restriction_bypass():
+        if self.env.su:
             return True
         if not product:
             return True
@@ -87,7 +88,7 @@ class ResUsers(models.Model):
     @api.multi
     def _is_account_allowed(self, account):
         self.ensure_one()
-        if self._has_restriction_bypass():
+        if self.env.su:
             return True
         if not account:
             return True
