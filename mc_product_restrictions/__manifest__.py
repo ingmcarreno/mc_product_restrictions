@@ -7,7 +7,7 @@
     'license': 'LGPL-3',
     'website': 'https://example.com',
     'category': 'Product',
-    'depends': ['base', 'product', 'account'],
+    'depends': ['base', 'product', 'account', 'sale'],
     'data': [
         'security/res_groups.xml',
         'security/ir_rule_data.xml',

@@ -2,6 +2,16 @@
 from odoo import api, fields, models
 
 
+def _to_product_template(product):
+    if not product:
+        return product
+    if product._name == 'product.template':
+        return product
+    if product._name == 'product.product':
+        return product.product_tmpl_id
+    return product
+
+
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
@@ -51,3 +61,36 @@ class ResUsers(models.Model):
             group.sudo().write({'users': [(4, uid) for uid in to_add.ids]})
         if to_remove:
             group.sudo().write({'users': [(3, uid) for uid in to_remove.ids]})
+
+    @api.multi
+    def _is_product_restriction_active(self):
+        self.ensure_one()
+        return bool(self.restricted_product_ids)
+
+    @api.multi
+    def _is_account_restriction_active(self):
+        self.ensure_one()
+        return bool(self.restricted_account_ids)
+
+    @api.multi
+    def _is_product_allowed(self, product):
+        self.ensure_one()
+        if self.env.su:
+            return True
+        if not product:
+            return True
+        if not self._is_product_restriction_active():
+            return True
+        template = _to_product_template(product)
+        return template in self.restricted_product_ids
+
+    @api.multi
+    def _is_account_allowed(self, account):
+        self.ensure_one()
+        if self.env.su:
+            return True
+        if not account:
+            return True
+        if not self._is_account_restriction_active():
+            return True
+        return account in self.restricted_account_ids
