@@ -21,9 +21,9 @@ class AccountInvoiceLine(models.Model):
         return super(AccountInvoiceLine, self).write(vals)
 
     def _check_restrictions(self, vals):
-        if self.env.su or not isinstance(vals, dict):
-            return
         user = self.env.user
+        if user._has_restriction_bypass() or not isinstance(vals, dict):
+            return
         product_id = vals.get('product_id')
         if product_id:
             product = self.env['product.product'].browse(product_id)

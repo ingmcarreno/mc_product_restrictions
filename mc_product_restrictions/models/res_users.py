@@ -75,6 +75,7 @@ class ResUsers(models.Model):
     @api.multi
     def _is_product_allowed(self, product):
         self.ensure_one()
+        if self._has_restriction_bypass():
         if self.env.su:
             return True
         if not product:
@@ -94,3 +95,12 @@ class ResUsers(models.Model):
         if not self._is_account_restriction_active():
             return True
         return account in self.restricted_account_ids
+
+    @api.multi
+    def _has_restriction_bypass(self):
+        self.ensure_one()
+        if self.env.uid == SUPERUSER_ID:
+            return True
+        if self.env.uid == self.id and self.has_group('base.group_system'):
+            return True
+        return False

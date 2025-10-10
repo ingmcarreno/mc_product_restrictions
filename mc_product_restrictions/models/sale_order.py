@@ -21,7 +21,8 @@ class SaleOrderLine(models.Model):
         return super(SaleOrderLine, self).write(vals)
 
     def _check_allowed_product(self, vals):
-        if self.env.su:
+        user = self.env.user
+        if user._has_restriction_bypass():
             return
         if not isinstance(vals, dict):
             return
@@ -29,7 +30,7 @@ class SaleOrderLine(models.Model):
         if not product_id:
             return
         product = self.env['product.product'].browse(product_id)
-        if product and not self.env.user._is_product_allowed(product):
+        if product and not user._is_product_allowed(product):
             raise ValidationError(
                 "You are not allowed to use the product '%s' in sales orders." % product.display_name
             )
